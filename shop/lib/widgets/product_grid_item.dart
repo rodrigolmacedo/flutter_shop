@@ -24,7 +24,7 @@ class ProductGridItem extends StatelessWidget {
           child: Hero(
             tag: product.id,
             child: FadeInImage(
-              placeholder: AssetImage('assets\images\product-placeholder.png'),
+              placeholder: AssetImage('assets/images/product-placeholder.png'),
               image: NetworkImage(product.imageUrl),
               fit: BoxFit.cover,
             ),
