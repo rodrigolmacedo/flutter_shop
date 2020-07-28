@@ -73,7 +73,7 @@ class Products with ChangeNotifier {
     final index = _items.indexWhere((prod) => prod.id == product.id);
     if (index >= 0) {
       await http.patch(
-        "$_baseUrl/${product.id}.json",
+        "$_baseUrl/${product.id}.json?auth=$_token",
         body: json.encode({
           'tittle': product.title,
           'description': product.description,
