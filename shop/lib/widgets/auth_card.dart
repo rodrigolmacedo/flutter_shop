@@ -80,6 +80,10 @@ class _AuthCardState extends State<AuthCard>
       _showErrorDialog(error.toString());
     } catch (error) {
       _showErrorDialog("Ocorreu um erro inesperado.");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -108,7 +112,7 @@ class _AuthCardState extends State<AuthCard>
         duration: Duration(milliseconds: 300),
         curve: Curves.linear,
         width: deviceSize.width * 0.75,
-        height: _authMode == AuthMode.Login ? 290 : 371,
+        // height: _authMode == AuthMode.Login ? 270 : 371,
         //height: _heightAnimation.value.height,
         padding: const EdgeInsets.all(16.0),
         child: Form(
