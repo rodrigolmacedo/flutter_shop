@@ -1,6 +1,6 @@
 import '../providers/product.dart';
 
-final DummyProducts = [
+final dummyProducts = [
   Product(
     id: 'p1',
     title: 'Red Shirt',
