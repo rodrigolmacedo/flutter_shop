@@ -10,11 +10,38 @@ class AuthCard extends StatefulWidget {
   _AuthCardState createState() => _AuthCardState();
 }
 
-class _AuthCardState extends State<AuthCard> {
+class _AuthCardState extends State<AuthCard>
+    with SingleTickerProviderStateMixin {
   bool _isLoading = false;
   GlobalKey<FormState> _form = GlobalKey();
   AuthMode _authMode = AuthMode.Login;
   final _passwordController = TextEditingController();
+
+  AnimationController _controllerAnimation;
+  Animation<double> _opacityAnimation;
+  Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controllerAnimation =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+
+    _opacityAnimation = Tween(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(parent: _controllerAnimation, curve: Curves.linear));
+
+    _slideAnimation = Tween<Offset>(begin: Offset(0, -1.5), end: Offset(0, 0))
+        .animate(CurvedAnimation(
+            parent: _controllerAnimation, curve: Curves.linear));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controllerAnimation.dispose();
+  }
+
   final Map<String, String> authData = {'email': '', 'password': ''};
   void _showErrorDialog(String msg) {
     showDialog(
@@ -54,9 +81,6 @@ class _AuthCardState extends State<AuthCard> {
     } catch (error) {
       _showErrorDialog("Ocorreu um erro inesperado.");
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   void _switchAuthMode() {
@@ -64,10 +88,12 @@ class _AuthCardState extends State<AuthCard> {
       setState(() {
         _authMode = AuthMode.Signup;
       });
+      _controllerAnimation.forward();
     } else {
       setState(() {
         _authMode = AuthMode.Login;
       });
+      _controllerAnimation.reverse();
     }
   }
 
@@ -78,8 +104,12 @@ class _AuthCardState extends State<AuthCard> {
     return Card(
       elevation: 8.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Container(
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.linear,
         width: deviceSize.width * 0.75,
+        height: _authMode == AuthMode.Login ? 290 : 371,
+        //height: _heightAnimation.value.height,
         padding: const EdgeInsets.all(16.0),
         child: Form(
             key: _form,
@@ -87,7 +117,7 @@ class _AuthCardState extends State<AuthCard> {
               children: [
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Email'),
-                  keyboardType: TextInputType.emailAddress,
+                  //keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value.isEmpty || !value.contains('@'))
                       return 'informe um email válido';
@@ -108,18 +138,31 @@ class _AuthCardState extends State<AuthCard> {
                         },
                         onSaved: (value) => authData['password'] = value,
                       ),
-                if (_authMode == AuthMode.Signup)
-                  TextFormField(
-                    decoration: InputDecoration(labelText: 'Confirmar Senha'),
-                    obscureText: true,
-                    validator: _authMode == AuthMode.Signup
-                        ? (value) {
-                            if (value != _passwordController.text)
-                              return 'senhas são diferentes!';
-                            return null;
-                          }
-                        : null,
+                AnimatedContainer(
+                  constraints: BoxConstraints(
+                      minHeight: _authMode == AuthMode.Signup ? 60 : 0,
+                      maxHeight: _authMode == AuthMode.Signup ? 120 : 0),
+                  duration: Duration(milliseconds: 300),
+                  curve: Curves.linear,
+                  child: FadeTransition(
+                    opacity: _opacityAnimation,
+                    child: SlideTransition(
+                      position: _slideAnimation,
+                      child: TextFormField(
+                        decoration:
+                            InputDecoration(labelText: 'Confirmar Senha'),
+                        obscureText: true,
+                        validator: _authMode == AuthMode.Signup
+                            ? (value) {
+                                if (value != _passwordController.text)
+                                  return 'senhas são diferentes!';
+                                return null;
+                              }
+                            : null,
+                      ),
+                    ),
                   ),
+                ),
                 SizedBox(height: 20),
                 RaisedButton(
                   onPressed: _submit,
