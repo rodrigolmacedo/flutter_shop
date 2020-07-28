@@ -5,6 +5,7 @@ import 'package:shop/providers/cart.dart';
 import 'package:shop/providers/orders.dart';
 import 'package:shop/providers/products.dart';
 import 'package:shop/utils/app_routes.dart';
+import 'package:shop/utils/custom_route.dart';
 import 'package:shop/views/auth_home_screen.dart';
 import 'package:shop/views/cart_screen.dart';
 import 'package:shop/views/order_screen.dart';
@@ -36,10 +37,13 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Minha Loja',
         theme: ThemeData(
-          primarySwatch: Colors.purple,
-          accentColor: Colors.deepOrange,
-          fontFamily: 'Lato',
-        ),
+            primarySwatch: Colors.purple,
+            accentColor: Colors.deepOrange,
+            fontFamily: 'Lato',
+            pageTransitionsTheme: PageTransitionsTheme(builders: {
+              TargetPlatform.android: CustomPageTransitionsBuilder(),
+              TargetPlatform.iOS: CustomPageTransitionsBuilder(),
+            })),
         routes: {
           AppRoutes.PRODUCT_DETAIL: (context) => ProductDetailScreen(),
           AppRoutes.PRODUCT_FORM: (context) => ProductFormScreen(),
