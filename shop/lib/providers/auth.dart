@@ -32,7 +32,7 @@ class Auth with ChangeNotifier {
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
     String _url =
-        'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=[webkey_project]';
+        'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyAVXStDYb81HsZHAWaicBXwGEovneo38GA';
 
     final response = await http.post(_url,
         body: json.encode(
